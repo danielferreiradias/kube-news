@@ -1,3 +1,5 @@
+
+
 name: CI-CD
 
 # Controls when the workflow will run
@@ -5,7 +7,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,22 +21,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 	  
-
-	  - name: Docker Login
-	    uses: docker/login-action@v2.0.0
-	    with:
-	  	username: ${{secrets.DOCKERHUB_USER}}
-	  	password: ${{secrets.DOCKERHuB_PWD}}
+      - name: Docker Login
+	uses: docker/login-action@v2.0.0
+	with:
+	  username: ${{secrets.DOCKERHUB_USER}}
+	  password: ${{secrets.DOCKERHuB_PWD}}
 		
-		- name: Build and push Docker images
-		  uses: docker/build-push-action@v3.0.0
-		  with:
-		    file: ./src/Dockerfile
-			context: ./src
-			push : true
-			tags: |
-			  nielbit/kube-news:latest
-			  nielbit/kube-news:${{github.run_number}}
+       - name: Build and push Docker images
+	 uses: docker/build-push-action@v3.0.0
+	 with:
+	   file: ./src/Dockerfile
+	   context: ./src
+	   push : true
+	   tags: |
+             nielbit/kube-news:latest
+	     nielbit/kube-news:${{github.run_number}}
 
   CD:
     runs-on: ubuntu-latest

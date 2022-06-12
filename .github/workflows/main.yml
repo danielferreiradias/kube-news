@@ -1,4 +1,4 @@
-#
+
 
 name: CI-CD
 
@@ -28,30 +28,30 @@ jobs:
           password: ${{secrets.DOCKERHuB_PWD}}
 
       - name: Build and push Docker images
-	uses: docker/build-push-action@v3.0.0
-	with:
-	  file: ./src/Dockerfile
-	  context: ./src
-	  push : true
-	  tags: |
-	    nielbit/kube-news:latest
+        uses: docker/build-push-action@v3.0.0
+        with:
+          file: ./src/Dockerfile
+          context: ./src
+          push : true
+          tags: |
+            nielbit/kube-news:latest
             nielbit/kube-news:${{github.run_number}}
-	    
+   
   CD:
     runs-on: ubuntu-latest
-	needs: [CI]
+        needs: [CI]
 
     steps:
       - uses: actions/checkout@v3
       - name: Kubernetes Set Context
-	  uses: Azure/k8s-set-context@v2
-	  with:
+          uses: Azure/k8s-set-context@v2
+          with:
         method: kubeconfig
-		kubeconfig: ${{secrets.K8S_CONFIG}}
+                kubeconfig: ${{secrets.K8S_CONFIG}}
 		
-	  - name: Deploy to Kubernetes cluster
-	    uses: Azure/k8s-deploy@v3.1
-	    with:
-		  images: nielbit/kube-news:${{github.run_number}}
-		  manifests: |
-		    k8s/deployment.yaml
+          - name: Deploy to Kubernetes cluster
+            uses: Azure/k8s-deploy@v3.1
+            with:
+                  images: nielbit/kube-news:${{github.run_number}}
+                  manifests: |
+                    k8s/deployment.yaml
